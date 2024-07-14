@@ -1,2 +1,7 @@
+# IDEs config folders
+.vscode/
+.idea/
+
+# build folders
 build/
 .cache/

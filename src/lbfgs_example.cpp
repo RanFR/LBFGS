@@ -1,7 +1,8 @@
-#include "lbfgs.hpp"
+#include "lbfgs_origin.hpp"
 #include <Eigen/Eigen>
 #include <iostream>
 #include <iomanip>
+#include <chrono>
 
 class MinimizationExample
 {
@@ -12,17 +13,18 @@ public:
         Eigen::VectorXd x(N);
 
         /* Set the initial guess */
-        for (int i = 0; i < N; i += 2)
-        {
-            x(i) = -1.2;
-            x(i + 1) = 1.0;
-        }
+        // for (int i = 0; i < N; i += 2)
+        // {
+        //     x(i) = 1.1;
+        //     x(i + 1) = 1.0;
+        // }
+        x = 10.0 * Eigen::VectorXd::Random(N);
 
         /* Set the minimization parameters */
         lbfgs::lbfgs_parameter_t params;
-        params.g_epsilon = 1.0e-8;
+        params.g_epsilon = 1.0e-9;
         params.past = 3;
-        params.delta = 1.0e-8;
+        params.delta = 1.0e-9;
 
         /* Start minimization */
         int ret = lbfgs::lbfgs_optimize(x,
@@ -34,7 +36,7 @@ public:
                                         params);
 
         /* Report the result. */
-        std::cout << std::setprecision(4)
+        std::cout << std::setprecision(3)
                   << "================================" << std::endl
                   << "L-BFGS Optimization Returned: " << ret << std::endl
                   << "Minimized Cost: " << finalCost << std::endl
@@ -70,7 +72,7 @@ private:
                                const int k,
                                const int ls)
     {
-        std::cout << std::setprecision(4)
+        std::cout << std::setprecision(3)
                   << "================================" << std::endl
                   << "Iteration: " << k << std::endl
                   << "Function Value: " << fx << std::endl
@@ -83,6 +85,11 @@ private:
 
 int main(int argc, char **argv)
 {
+    auto start = std::chrono::steady_clock::now();
     MinimizationExample example;
-    return example.run(200);
+    example.run(10000);
+    auto end = std::chrono::steady_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end - start;
+    std::cout << "Time: " << elapsed_seconds.count() << "s" << std::endl;
+    return 0;
 }

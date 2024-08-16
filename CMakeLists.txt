@@ -8,4 +8,6 @@ include_directories(
     ${EIGEN3_INCLUDE_DIRS}
 )
 
-add_executable(${PROJECT_NAME}_exec src/lbfgs_example.cpp)
+add_executable(${PROJECT_NAME}_origin src/lbfgs_example.cpp)
+
+add_executable(${PROJECT_NAME}_exec src/test.cpp)

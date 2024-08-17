@@ -22,7 +22,7 @@ public:
         int max_linesearch = 64; // The maximum number of trials for the line search.
         double min_step = 1.0e-20; // The minimum step of the line search routine.
         double max_step = 1.0e+20; // The maximum step of the line search routine.
-        double f_dec_coeff = 1.0e-4; // The coefficient for the accuracy of the line search routine.
+        double f_dec_coeff = 1.0e-6; // The coefficient for the accuracy of the line search routine.
         double s_curv_coeff = 0.9; // A parameter to control the accuracy of the line search routine.
         double cautious_factor = 1.0e-6; // A parameter to ensure the global convergence for nonconvex functions.
         double machine_prec = 1.0e-16; // The machine precision for floating-point values.
@@ -35,8 +35,6 @@ public:
         LBFGS_CONVERGENCE = 0,
         /** L-BFGS satisfies stopping criteria. */
         LBFGS_STOP,
-        /** The iteration has been canceled by the monitor callback. */
-        LBFGS_CANCELED,
 
         /** Unknown error. */
         LBFGSERR_UNKNOWNERROR = -1024,
@@ -101,31 +99,11 @@ public:
     */
     using stepbound = std::function<double(const Eigen::VectorXd &xp, const Eigen::VectorXd &d)>;
 
-    /**
-        Callback interface to monitor the progress of the minimization process.
-
-        @param x: The current values of variables.
-        @param g: The current gradient values of variables.
-        @param fx: The current value of the cost function.
-        @param step: The line-search step used for this iteration.
-        @param iter: The iteration count.
-        @param ls: The number of evaluations called for this iteration.
-        @return int: Zero to continue the minimization process. Returning a
-                    non-zero value will cancel the minimization process.
-    */
-    using progress = std::function<int(const Eigen::VectorXd &x,
-                                       const Eigen::VectorXd &g,
-                                       const double fx,
-                                       const double step,
-                                       const int iter,
-                                       const int ls)>;
-
     // Callback class
     class Callback {
     public:
         evaluate proc_evaluate;
         stepbound proc_stepbound;
-        progress proc_progress;
     };
     std::shared_ptr<Callback> cb_ptr;
 
@@ -345,14 +323,6 @@ public:
                     break;
                 }
 
-                /* Report the progress. */
-                if (cb_ptr->proc_progress) {
-                    if (cb_ptr->proc_progress(x, g, fx, step, k, ls)) {
-                        ret = LBFGS_CANCELED;
-                        break;
-                    }
-                }
-
                 /*
                 Convergence test.
                 The criterion is given by the following formula: ||g(x)||_inf / max(1, ||x||_inf) < g_epsilon
@@ -486,9 +456,6 @@ public:
 
             case LBFGS_STOP:
                 return "Success: met stopping criteria (past f decrease less than delta).";
-
-            case LBFGS_CANCELED:
-                return "The iteration has been canceled by the monitor callback.";
 
             case LBFGSERR_UNKNOWNERROR:
                 return "Unknown error.";

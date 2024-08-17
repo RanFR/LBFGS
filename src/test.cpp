@@ -23,17 +23,6 @@ public:
         // }
         return fx;
     }
-
-    int monitorProgress(const Eigen::VectorXd &x, const Eigen::VectorXd &g, const double fx,
-                               const double step, const int iter, const int ls) {
-        std::cout << std::setprecision(3) << "================================" << std::endl
-                  << "Iteration: " << iter << std::endl
-                  << "Function Value: " << fx << std::endl
-                  << "Gradient Inf Norm: " << g.cwiseAbs().maxCoeff() << std::endl
-                  << "Variables: " << std::endl
-                  << x.transpose() << std::endl;
-        return 0;
-    }
 };
 
 class Test {
@@ -44,24 +33,17 @@ public:
         Eigen::VectorXd x(N);
 
         /* set the initial guess */
-        x = 10.0 * Eigen::VectorXd::Zero(N);
+        x = 10.0 * Eigen::VectorXd::Random(N);
 
         /* Set teh function */
         std::shared_ptr<Function> func_ptr = std::make_shared<Function>();
 
         /* Set the minimization parameters */
         std::shared_ptr<LBFGS> lbfgs_ptr = std::make_shared<LBFGS>();
-        lbfgs_ptr->param_ptr->grad_epsilon = 1.0e-9;
-        lbfgs_ptr->param_ptr->past = 3;
-        lbfgs_ptr->param_ptr->delta = 1.0e-9;
 
         /* Set the callback data of lbfgs */
-        Eigen::VectorXd g;
         lbfgs_ptr->cb_ptr->proc_evaluate =
             std::bind(&Function::costFunction, func_ptr, std::placeholders::_1, std::placeholders::_2);
-        lbfgs_ptr->cb_ptr->proc_progress =
-            std::bind(&Function::monitorProgress, func_ptr, std::placeholders::_1, std::placeholders::_2,
-                      std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6);
 
         /* Start optimization */
         int val = lbfgs_ptr->optimize(x, final_cost);

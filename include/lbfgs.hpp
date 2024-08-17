@@ -1,11 +1,13 @@
 #ifndef LBFGS_HPP
 #define LBFGS_HPP
 
-#include <Eigen/Dense>
+#include <string>
 #include <cmath>
 #include <algorithm>
 #include <memory>
 #include <functional>
+
+#include <Eigen/Dense>
 
 class LBFGS {
 public:
@@ -238,8 +240,7 @@ public:
         @return int: The status code. This function returns a nonnegative integer if the minimization process terminates
                     without an error. A negative integer indicates an error.
     */
-    int optimize(Eigen::VectorXd &x,
-                 double &f) {
+    int optimize(Eigen::VectorXd &x, double &f) {
         int ret, i, j, k, ls, end, bound;
         double step, step_min, step_max, fx, ys, yy;
         double gnorm_inf, xnorm_inf, beta, rate, cau;
@@ -433,8 +434,7 @@ public:
                     Recursive formula to compute dir = -(H \cdot g).
                     This is described in page 779 of:
                     Jorge Nocedal.
-                    Updating Quasi-Newton Matrices with Limited Storage.
-                    Mathematics of Computation, Vol. 35, No. 151,
+                    Updating Quasi-Newton Matrices with Limited Storage. Mathematics of Computation, Vol. 35, No. 151,
                     pp. 773--782, 1980.
                     */
                     ++bound;
@@ -477,9 +477,9 @@ public:
         Get string description of an optimize() return code.
 
         @param err: A value returned by optimize().
-        @return const char*: The string description of the return code.
+        @return const std::string: The string description of the return code.
     */
-    const char *lbfgs_strerror(const int err) {
+    const std::string display_message(const int err) {
         switch (err) {
             case LBFGS_CONVERGENCE:
                 return "Success: reached convergence (g_epsilon).";

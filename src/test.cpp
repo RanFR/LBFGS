@@ -44,7 +44,7 @@ public:
         Eigen::VectorXd x(N);
 
         /* set the initial guess */
-        x = 10.0 * Eigen::VectorXd::Random(N);
+        x = 10.0 * Eigen::VectorXd::Zero(N);
 
         /* Set teh function */
         std::shared_ptr<Function> func_ptr = std::make_shared<Function>();
@@ -73,6 +73,8 @@ public:
                   << "Minimized Cost: " << final_cost << std::endl
                   << "Optimal Variables: " << std::endl
                   << x.transpose() << std::endl;
+
+        std::cout << lbfgs_ptr->display_message(val) << std::endl;
     }
 };
 

@@ -18,7 +18,7 @@ public:
         //     x(i) = 1.1;
         //     x(i + 1) = 1.0;
         // }
-        x = 10.0 * Eigen::VectorXd::Random(N);
+        x = 10.0 * Eigen::VectorXd::Zero(N);
 
         /* Set the minimization parameters */
         lbfgs::lbfgs_parameter_t params;

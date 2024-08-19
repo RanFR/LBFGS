@@ -7,7 +7,7 @@ __LBFGS-Lite__ is a __C++__ [__header-only__](https://en.wikipedia.org/wiki/Head
 
 ## 1. How to use
 
-Write cost function and set bound function. You can see the examples in test.cpp.
+Write cost function and set bound function. You can see the examples in *src* folder.
 
 ## 2. Licence
 

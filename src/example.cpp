@@ -6,7 +6,7 @@
 
 class Function {
 public:
-    // f(x, y) = (1.0-x)^2+100.0*(y-x^2)^2
+    /* f(x, y) = (1.0-x)^2+100.0*(y-x^2)^2 */
     double costFunction(const Eigen::VectorXd &x, Eigen::VectorXd &g) {
         const int n = x.size();
         double fx = 0.0;
@@ -17,10 +17,7 @@ public:
             g(i) = -2.0 * (x(i) * g(i + 1) + t1);
             fx += t1 * t1 + t2 * t2;
         }
-        // for (int i = 0; i < n; ++i) {
-        //     g(i) = 2.0 * x(i);
-        //     fx += x(i) * x(i);
-        // }
+
         return fx;
     }
 };
@@ -40,6 +37,10 @@ public:
 
         /* Set the minimization parameters */
         std::shared_ptr<LBFGS> lbfgs_ptr = std::make_shared<LBFGS>();
+
+        /* Set the LBFGS parameters */
+        lbfgs_ptr->param_ptr->grad_epsilon = 1.0e-9;
+        lbfgs_ptr->param_ptr->delta = 1.0e-9;
 
         /* Set the callback data of lbfgs */
         lbfgs_ptr->cb_ptr->proc_evaluate =
